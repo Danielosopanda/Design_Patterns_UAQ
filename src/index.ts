@@ -1,4 +1,5 @@
 import express from 'express';
+import { Client } from "pg";
 
 require("dotenv").config({
   path: ".env.local",
@@ -8,7 +9,12 @@ const app = express();
 const port = process.env.PORT;
 
 app.get("/", async (req, res) => {
-  res.send("Hello world!");
+
+  const client = new Client();
+  await client.connect();
+  const resDb = await client.query("SELECT NOW()");
+  await client.end();
+  console.log(resDb)
 });
 
 app.listen(port, () => {
