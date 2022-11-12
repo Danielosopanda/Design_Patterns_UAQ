@@ -10,7 +10,13 @@ const port = process.env.PORT;
 
 app.get("/", async (req, res) => {
 
-  const client = new Client();
+  const client = new Client({
+    user: "username",
+    host: "database",
+    database: "test",
+    password: "password",
+    port: 5433
+  });
   await client.connect();
   const resDb = await client.query("SELECT NOW()");
   await client.end();
