@@ -1,0 +1,45 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+volumes:
+  cache:
+    driver: local
+  database:
+    driver: local
+
+services:
+
+  database:
+    image: postgres:13
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    volumes:
+      - database:/data
+    environment:
+      POSTGRES_USER: '${DB_USERNAME}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_NAME}'
+      PGPORT: '${DB_PORT}'
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    depends_on:
+      - database
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      PORT: ${PORT}
+      HOST: ${HOST}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+    volumes:
+      - ./:/app
+    stdin_open: true
+
